@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.project.itai.FindAPlaceVer2.fragments.Fragment1">
+
+
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/city_but"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cities" />
+
+
+        <RadioButton
+            android:id="@+id/resto_but"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Restaurants" />
+
+        <RadioButton
+            android:id="@+id/hotel_but"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hotels" />
+
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/search_box"
+        android:layout_below="@id/radiogroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/search_name"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:textSize="14sp"
+         />
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_below="@id/search_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <!--<Button-->
+            <!--android:id="@+id/search_button"-->
+            <!--android:text="@string/search_places"-->
+            <!--android:textSize="@dimen/button_txt_size"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="2dp"-->
+            <!--android:layout_weight="1"/>-->
+        <Button
+            android:id="@+id/user_loc"
+            android:text="User Location"
+            android:textSize="@dimen/button_txt_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/new_search"
+            android:text="@string/new_search"
+            android:textSize="@dimen/button_txt_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:layout_weight="1"
+            />
+</LinearLayout>
+
+
+    <!--<Button-->
+        <!--android:id="@+id/alertButton"-->
+        <!--android:layout_below="@+id/buttons"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Directions"-->
+        <!--android:textSize="12sp"-->
+        <!--android:padding="5dp"-->
+        <!--/>-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_recycler_view"
+        android:layout_below="@id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:scrollbars="vertical"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>
+

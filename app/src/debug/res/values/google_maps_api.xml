@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=26:8A:2F:BB:0C:A8:D4:42:64:4F:7B:2F:EC:04:5E:97:04:0D:FE:BF%3Bcom.example.avi.advancedfragmentexample
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    26:8A:2F:BB:0C:A8:D4:42:64:4F:7B:2F:EC:04:5E:97:04:0D:FE:BF
+
+    SHA-1 certificate fingerprint:
+    26:8A:2F:BB:0C:A8:D4:42:64:4F:7B:2F:EC:04:5E:97:04:0D:FE:BF
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=C3:E0:32:7F:4F:AA:BB:98:0F:07:F3:95:67:6B:8F:1A:DC:9C:D2:DC%3Bcom.example.avi.advancedfragmentexample.activities
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    C3:E0:32:7F:4F:AA:BB:98:0F:07:F3:95:67:6B:8F:1A:DC:9C:D2:DC
+
+    SHA-1 certificate fingerprint:
+    C3:E0:32:7F:4F:AA:BB:98:0F:07:F3:95:67:6B:8F:1A:DC:9C:D2:DC
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+<string name="google_maps_key" translatable="false">
+        AIzaSyBQicz1mY96-_n--Wrn_WDeZZPBUCkbNBQ
+</string>
+    <!--AIzaSyA18C_D1d3X7e3T6KgEnFlpkECItDWIHO4-->
+    <!--AIzaSyAV99i-01ts4v96u7f4uZYLjY-PGmn5MDk-->
+</resources>
