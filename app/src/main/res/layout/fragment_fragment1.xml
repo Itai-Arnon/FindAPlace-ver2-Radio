@@ -15,42 +15,52 @@
         android:id="@+id/city_but"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cities" />
-
+        android:text="@string/cities"
+        android:checked="true"
+        android:layout_weight="1"/>
 
     <RadioButton
         android:id="@+id/resto_but"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/restaurants" />
+        android:text="@string/restaurants"
+        android:layout_weight="1"/>
 
     <RadioButton
         android:id="@+id/hotel_but"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hotels" />
+        android:text="@string/hotels"
+        android:layout_weight="1"/>
 
 </RadioGroup>
 
 
-    <EditText
-        android:id="@+id/search_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/radiogroup"
-        android:hint="@string/search_name"
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        android:textSize="14sp" />
+    <!--<EditText-->
+        <!--android:id="@+id/search_box"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/radiogroup"-->
+        <!--android:hint="@string/search_name"-->
+        <!--android:imeOptions="actionDone"-->
+        <!--android:inputType="text"-->
+        <!--android:textSize="14sp" />-->
 
 
     <LinearLayout
         android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/search_box"
+        android:layout_below="@id/radiogroup"
         android:orientation="horizontal">
 
+        <Button
+        android:id="@+id/search_button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/frag1button_height"
+        android:layout_weight="1"
+        android:text="@string/search_places"
+        android:textSize="@dimen/frag1_txt_size" />
 
 
         <Button
@@ -87,13 +97,7 @@
 </RelativeLayout>
 
 
-    <!--<Button-->
-    <!--android:id="@+id/search_button"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="@dimen/frag1button_height"-->
-    <!--android:layout_weight="1"-->
-    <!--android:text="@string/search_places"-->
-    <!--android:textSize="@dimen/frag1_txt_size" />-->
+
 
 
     <!--<Button-->

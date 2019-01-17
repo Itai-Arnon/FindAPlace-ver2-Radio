@@ -31,6 +31,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -59,6 +61,8 @@ public class Fragment1 extends Fragment {
     private SearchAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    protected RadioGroup radioGroup;
+    protected RadioButton radioButton;
 
     //  keys  needed preferences values
     private final String FAVTABLE = "Shared_Text";
@@ -67,7 +71,6 @@ public class Fragment1 extends Fragment {
     private final String USER_LOC_LONGTITUDE = "user_long";
     private final String UNIT = "isKm";
     private boolean isLongClick = false; //assures a long click won't activate a short click
-
 
     private LocationManager locManager;
     //User Location
@@ -80,8 +83,8 @@ public class Fragment1 extends Fragment {
         @Override
         // location parameter presents the updated location of the device
         public void onLocationChanged(Location location) {
-           if (location!=null)
-            lastLocation = location;
+              lastLocation = location;
+
 
         }
 
@@ -98,7 +101,6 @@ public class Fragment1 extends Fragment {
         }
     };
     private static Location lastLocation = null;
-    private double distanceInMeters;
     private String provider;
 
     // zero means it checks all the time
@@ -110,10 +112,28 @@ public class Fragment1 extends Fragment {
     private Snackbar userLocationSnackbarError;
 
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Alert Dialog - to inform about how the mock should work
+        //todo check if to remove
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+        alert.setTitle("About Search Places ");
+        alert.setMessage("Search by Categories:\n 1.CITIES\n 2.RESTAURANTS\n 3.HOTELS\n" +
+                "And then press SEARCH PLACES\n" +
+                "Pressing for a prolonged time on the list will add the location\n" +
+                "to the Favorites List and Data Base, where it can be accessed again\n" +
+                "You can access the Favorites list by sliding\n the search list to the left\n");
+
+        alert.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+
+        });
+        alert.show();
         //Location Services L Manager Instance
         locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 // Optional Additions to the service Criteria Object
@@ -162,41 +182,7 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-
         // Alert Dialog - to inform about how the mock should work
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-        alert.setTitle("About Search Places ");
-        alert.setMessage("Search by Categories:\n 1.CITY\n 2.REST\n 3.HOTEL\n" +
-                " And then press SEARCH PLACES\n" +
-                "Pressing for a prolonged time will add the location" +
-                "the Favorites List and Data Base, where it can be accessed again\n" +
-                "You can access the Favorites list by sliding\n the search list to the left");
-
-        alert.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-
-        });
-        alert.show();
-
-        // Alert Dialog - to inform about how the mock should work
-
-        AlertDialog.Builder alert2 = new AlertDialog.Builder(getContext());
-        alert2.setTitle("About the Favorites");
-        alert2.setMessage("Favorites will not show unless\n you press Load Favorites " +
-                "A long press will erase the specific favorites\n " +
-                "Pressing Delete Favorites will delete the entire list \n" +
-                "After turning the cell phone, press Load Favorites again");
-
-        alert2.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
-        alert2.show();
-
 
 
 
@@ -239,7 +225,8 @@ public class Fragment1 extends Fragment {
                     case R.id.hotel_but:
 
                         placesData.add(new Place("Dan Tlv Hotel", 32.064715, 34.763190, "Yarkon 22", "Tel Aviv", "http:"));
-                        placesData.add(new Place("Hilton Tlv Hotel", 32.089191, 34.770317, "Yarkon 10", "Tel Aviv", "http:"));
+                        placesData.add(new Place("Hilton Tlv Hotel", 32.089191,
+                                34.770317, "Yarkon 10", "Tel Aviv", "http:"));
                         placesData.add(new Place("Dan Eilat Hotel", 29.55805, 34.94821, "N.Coast p.o 176", "Eilat", "http:"));
                         placesData.add(new Place("Leonardo Tiberias Hotel", 32.79221, 35.53124, "Habanim St.1", "Tiberias", "http:"));
                         break;
@@ -265,29 +252,51 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("Ha Chavit", 32.795067, 34.956454, "David Elazar Rd.", "Haifa", "tmp"));
 
                 }
-
-                if (placesData.size() > 0) {
-
-                    mAdapter = new SearchAdapter(placesData, new OnLocationListener(), new OnLocationLongListener());
-                    mRecyclerView.setAdapter(mAdapter);
-                    mAdapter.notifyDataSetChanged();
-                    //insertion
-                    Gson gson = new Gson();
-                    String jsStringInsert = gson.toJson(placesData);
-                    // resetPreferences();
-                    editor = preferences.edit();
-                    editor.putString(JSSTRING, jsStringInsert);
-                    Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + jsStringInsert + "::");
-                    editor.apply();
-
-                } else {
-                    Toast.makeText(getContext(), "Please choose one" +
-                            "of the following categories: CITY/HOTEL/REST", Toast.LENGTH_LONG);
-                }
-
             }
-
         };
+
+
+        //At this stage placesData is updated according to the radio buttons
+        //defining the views, and activating the anonymous class via radioListener
+
+        //Search Button
+        Button searchButton = fragmentView.findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+
+                                                radioGroup = fragmentView.findViewById(R.id.radiogroup);
+                                                int radioId = radioGroup.getCheckedRadioButtonId();
+                                                radioButton = fragmentView.findViewById(radioId);
+                                                radioListener.onClick(radioButton);
+
+
+                                                if (placesData.size() > 0) {
+
+                                                    mAdapter = new SearchAdapter(placesData, new OnLocationListener(), new OnLocationLongListener());
+                                                    mRecyclerView.setAdapter(mAdapter);
+                                                    mAdapter.notifyDataSetChanged();
+                                                    //insertion
+                                                    //todo check if need to declare again
+                                                    Gson gson = new Gson();
+                                                    String jsStringInsert = gson.toJson(placesData);
+                                                    // resetPreferences(); using the editor to insert
+                                                    editor = preferences.edit();
+                                                    editor.putString(JSSTRING, jsStringInsert);
+                                                    Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + jsStringInsert + "::");
+                                                    editor.apply();
+
+                                                } else {
+                                                    //todo check
+                                                    Toast.makeText(getContext(), "An Error Occurred", Toast.LENGTH_LONG)
+                                                            .show();
+                                                    System.exit(0);
+                                                }
+
+                                            }
+                                        });
+
+
         // Returns the location of the user
         Button userLocation = fragmentView.findViewById(R.id.user_loc);
         userLocation.setOnClickListener(new View.OnClickListener() {
@@ -359,7 +368,7 @@ public class Fragment1 extends Fragment {
     class OnLocationListener implements SearchAdapter.Listener {
         Location targetLocation = new Location(provider);
         Location userLocation;// the requested on focus location to be measure with User Location
-
+        protected double distanceInMeters = 0;
         @Override
         public void onLocation(Place place) {
             //assures a long click won't activate a short click
@@ -378,12 +387,12 @@ public class Fragment1 extends Fragment {
                     targetLocation.setLatitude(place.getLat());
                     targetLocation.setLongitude(place.getLng());
                     //calculate distance part of onLocationChanged method:LocationListener interface
-                    double distanceInMeters = targetLocation.distanceTo(userLocation);
+                     distanceInMeters = targetLocation.distanceTo(userLocation);
 
 
                     // via method textBasedOnUnit() arrays both miles and km are accommodated
 
-                    distanceBar = Snackbar.make(getView(), "Distance to " + place.getName() + ": " + textBasedOnUnit(userLocation, targetLocation),
+                    distanceBar = Snackbar.make(getView(), "Distance to "+ place.getName() + ": "+ textBasedOnUnit(userLocation, targetLocation),
                             Snackbar.LENGTH_INDEFINITE)
                             .setAction("Dismiss", new View.OnClickListener() {
                                 @Override

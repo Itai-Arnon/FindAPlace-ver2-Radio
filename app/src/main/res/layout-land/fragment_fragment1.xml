@@ -17,49 +17,53 @@
             android:id="@+id/city_but"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cities" />
+            android:text="Cities"
+            android:checked="true"
+            android:layout_weight="1"/>
 
 
         <RadioButton
             android:id="@+id/resto_but"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Restaurants" />
+            android:text="Restaurants"
+            android:layout_weight="1"/>
 
         <RadioButton
             android:id="@+id/hotel_but"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hotels" />
+            android:text="Hotels"
+            android:layout_weight="1"/>
 
     </RadioGroup>
 
-    <EditText
-        android:id="@+id/search_box"
-        android:layout_below="@id/radiogroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/search_name"
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        android:textSize="14sp"
-         />
+    <!--<EditText-->
+        <!--android:id="@+id/search_box"-->
+        <!--android:layout_below="@id/radiogroup"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="@string/search_name"-->
+        <!--android:imeOptions="actionDone"-->
+        <!--android:inputType="text"-->
+        <!--android:textSize="14sp"-->
+         <!--/>-->
 
     <LinearLayout
         android:id="@+id/buttons"
-        android:layout_below="@id/search_box"
+        android:layout_below="@id/radiogroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-        <!--<Button-->
-            <!--android:id="@+id/search_button"-->
-            <!--android:text="@string/search_places"-->
-            <!--android:textSize="@dimen/button_txt_size"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:padding="2dp"-->
-            <!--android:layout_weight="1"/>-->
+        <Button
+            android:id="@+id/search_button"
+            android:text="@string/search_places"
+            android:textSize="@dimen/button_txt_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:layout_weight="1"/>
         <Button
             android:id="@+id/user_loc"
             android:text="User Location"

@@ -54,6 +54,21 @@ public class FavoritesFrag extends Fragment {
         super.onCreate(savedInstanceState);
         placesDao = new PlacesDao(getContext());
         placesData = new ArrayList<>();//initializes array list, stays empty until the Search Button
+// Alert Dialog - to inform about how the mock should work
+
+//        AlertDialog.Builder alert2 = new AlertDialog.Builder(getContext());
+//        alert2.setTitle("About the Favorites");
+//        alert2.setMessage("Favorites will not show unless\n you press Load Favorites " +
+//                "A long press will erase the specific favorites\n " +
+//                "Pressing Delete Favorites will delete the entire list \n" +
+//                "After turning the cell phone, press Load Favorites again");
+//
+//        alert2.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int whichButton) {
+//                dialog.cancel();
+//            }
+//        });
+//        alert2.show();
 
     }
 

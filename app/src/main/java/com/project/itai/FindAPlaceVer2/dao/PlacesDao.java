@@ -202,10 +202,10 @@ public class PlacesDao {
         Place tmp = new Place();
         tmp.setId(cursor.getInt(0));// set ID
         tmp.setName(cursor.getString(1));//Subject
-        tmp.setLat(cursor.getDouble(2));//getLng
-        tmp.setLng(cursor.getDouble(3));//Rati
-        tmp.setAddress(cursor.getString(4));//body
-        tmp.setCity(cursor.getString(5));//city added near finish
+        tmp.setLat(cursor.getDouble(2));//Latitude
+        tmp.setLng(cursor.getDouble(3));//Longitude
+        tmp.setAddress(cursor.getString(4));//Address
+        tmp.setCity(cursor.getString(5));//city
         tmp.setUrlImage(cursor.getString(6));//url
         return tmp;//tmp is the requested favorite
     }
@@ -218,7 +218,7 @@ public class PlacesDao {
         values.put(PlacesConstants.PLACES_LATITUDE, place.getLat());
         values.put(PlacesConstants.PLACES_LONGTITUDE, place.getLng());
         values.put(PlacesConstants.PLACES_ADDRESS, place.getAddress());
-        values.put(PlacesConstants.PLACES_CITY, place.getCity());//added near finish
+        values.put(PlacesConstants.PLACES_CITY, place.getCity());
         values.put(PlacesConstants.PLACES_URL, place.getUrlImage());
     return values;
     }
