@@ -2,7 +2,6 @@ package com.project.itai.FindAPlaceVer2.fragments;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,12 +27,7 @@ import java.util.ArrayList;
 
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link IUserFavAction} interface
- * to handle interaction events.
- */
+
 public class FavoritesFrag extends Fragment {
     private IUserActionsOnMap parentActivity;
     protected PlacesDao placesDao;
@@ -42,9 +36,7 @@ public class FavoritesFrag extends Fragment {
     private RecyclerView recyclerView;
     private FavoriteAdapter mAdapter;
     private View fragmentView;
-    private boolean isLongClick = false; //assures a long click won't activate a short click
-
-
+    protected boolean isLongClick = false;
 
 
 
@@ -54,25 +46,8 @@ public class FavoritesFrag extends Fragment {
         super.onCreate(savedInstanceState);
         placesDao = new PlacesDao(getContext());
         placesData = new ArrayList<>();//initializes array list, stays empty until the Search Button
-// Alert Dialog - to inform about how the mock should work
-
-//        AlertDialog.Builder alert2 = new AlertDialog.Builder(getContext());
-//        alert2.setTitle("About the Favorites");
-//        alert2.setMessage("Favorites will not show unless\n you press Load Favorites " +
-//                "A long press will erase the specific favorites\n " +
-//                "Pressing Delete Favorites will delete the entire list \n" +
-//                "After turning the cell phone, press Load Favorites again");
-//
-//        alert2.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int whichButton) {
-//                dialog.cancel();
-//            }
-//        });
-//        alert2.show();
 
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -136,8 +111,6 @@ public class FavoritesFrag extends Fragment {
         return fragmentView;
     }
 
-
-
     //implements built in listener inside RecyclerAdapter
     private class OnLocationListener implements FavoriteAdapter.Listener {
 
@@ -196,11 +169,15 @@ public class FavoritesFrag extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
     }
 
-//post onDestroy
+    //post onDestroy
     @Override
     public void onDetach() {
         super.onDetach();

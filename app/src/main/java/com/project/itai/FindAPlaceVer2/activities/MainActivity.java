@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
 
             case R.id.itemQuit:
                 System.exit(0);
+                finish();
                 return true;
 
             default:

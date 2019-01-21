@@ -72,35 +72,13 @@ public class Fragment1 extends Fragment {
     private final String UNIT = "isKm";
     private boolean isLongClick = false; //assures a long click won't activate a short click
 
-    private LocationManager locManager;
+
     //User Location
     //locListener is an interface that derives locations service via  locManager
     // who derives from the System Loc Services
-    private final LocationListener locListener = new LocationListener() {
-
-        //the method  is dynamic, allowing the user to keep track
-        //of his whereabouts all the time by using lastLocation, a class var
-        @Override
-        // location parameter presents the updated location of the device
-        public void onLocationChanged(Location location) {
-              lastLocation = location;
-
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-        }
-    };
+    private LocationManager locManager;
     private static Location lastLocation = null;
+    private LocationListener locListener;
     private String provider;
 
     // zero means it checks all the time
@@ -110,37 +88,43 @@ public class Fragment1 extends Fragment {
     private Snackbar distanceFailBar;
     private Snackbar distanceBar;
     private Snackbar userLocationSnackbarError;
-
-
+    private boolean toShowDialog = true;
+    private AlertDialog dialog = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        locListener = new LocationListener() {
 
-        // Alert Dialog - to inform about how the mock should work
-        //todo check if to remove
-        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-        alert.setTitle("About Search Places ");
-        alert.setMessage("Search by Categories:\n 1.CITIES\n 2.RESTAURANTS\n 3.HOTELS\n" +
-                "And then press SEARCH PLACES\n" +
-                "Pressing for a prolonged time on the list will add the location\n" +
-                "to the Favorites List and Data Base, where it can be accessed again\n" +
-                "You can access the Favorites list by sliding\n the search list to the left\n");
-
-        alert.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
+            //the method  is dynamic, allowing the user to keep track
+            //of his whereabouts all the time by using lastLocation, a class var
+            @Override
+            // location parameter presents the updated location of the device
+            public void onLocationChanged(Location location) {
+                if(location != null) {
+                    lastLocation = location;
+                }
             }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-        });
-        alert.show();
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {}
+        };
+
+
         //Location Services L Manager Instance
         locManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 // Optional Additions to the service Criteria Object
 
-        /*Crucial for the  function success/work*/
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        /*Crucial for the  function success/work -- check if any permission was not granted*/
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+             /*  && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { */
+
+
             //
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -158,6 +142,7 @@ public class Fragment1 extends Fragment {
         provider = locManager.getBestProvider(new Criteria(), true);
         if (provider != null) {
             //request location updates
+            lastLocation = locManager.getLastKnownLocation(provider);
             locManager.requestLocationUpdates(provider, 1000, 1, locListener);
         } else {
             Toast.makeText(getContext(), "Location Provider Has Failed, Exiting", Toast.LENGTH_LONG).show();
@@ -166,8 +151,7 @@ public class Fragment1 extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View fragmentView = inflater.inflate(R.layout.fragment_fragment1, container, false);
         Log.e(PlacesConstants.MY_NAME, "is container null:" + (container == null));
@@ -218,8 +202,6 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("Sydney", -1 * 33.8688, 151.2093, "Australia", "", "tmp"));
                         placesData.add(new Place("London", 51.507351, -0.127758, "England", "", "tmp"));
                         placesData.add(new Place("Tel Aviv", 32.078829, 34.781175, "Israel", "", "tmp"));
-
-
                         break;
 
                     case R.id.hotel_but:
@@ -291,6 +273,7 @@ public class Fragment1 extends Fragment {
                                                     Toast.makeText(getContext(), "An Error Occurred", Toast.LENGTH_LONG)
                                                             .show();
                                                     System.exit(0);
+
                                                 }
 
                                             }
@@ -302,16 +285,15 @@ public class Fragment1 extends Fragment {
         userLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Location location;
+                Location location = getlastLocation();
                 LatLng yourPosition;
 //todo problems
-                location = getlastLocation();// the last location is the user location
+
                 if (location != null) {
                     double lat = location.getLatitude(); //location is turned into LatLng object
                     double lng = location.getLongitude();
-                    double latitude = Double.parseDouble(new DecimalFormat("##.##").format(lat));
-                    double longitude = Double.parseDouble(new DecimalFormat("##.##").format(lng));
-                    yourPosition = new LatLng(latitude, longitude);
+
+                    yourPosition = new LatLng(lat, lng);
                     parentActivity.onFocusOnLocation(yourPosition, "User Location");
 
 
@@ -323,6 +305,9 @@ public class Fragment1 extends Fragment {
 
                     //informing the user about his loci. The snackbar will not disappear
                     // until the dismiss button is pressed and so are most of the snackbars
+                    //these two round lat & lng to provide a better look
+                    double latitude = Double.parseDouble(new DecimalFormat("##.####").format(lat));
+                    double longitude = Double.parseDouble(new DecimalFormat("##.####").format(lng));
                     userLocationSnackbar = Snackbar.make(getView(), "your latitude is: " + latitude
                                     + "\nyour longitude is: " + longitude,
                             Snackbar.LENGTH_INDEFINITE)
@@ -369,12 +354,13 @@ public class Fragment1 extends Fragment {
         Location targetLocation = new Location(provider);
         Location userLocation;// the requested on focus location to be measure with User Location
         protected double distanceInMeters = 0;
+
         @Override
         public void onLocation(Place place) {
             //assures a long click won't activate a short click
             if (!(isLongClick)) {
 
-                // We extract the item which the user clicked on. And notify his choice
+                // We extract the item which the user clicked on. And notify of his choice
                 Toast.makeText(getActivity().getApplicationContext(), place.getName() +
                         "\n lat: " + place.getLat() + " lng: " + place.getLng(), Toast.LENGTH_LONG).show();
                 LatLng newLocation = new LatLng(place.getLat(), place.getLng());
@@ -464,18 +450,52 @@ public class Fragment1 extends Fragment {
         return lastLocation;
     }
 
-    /* 15/12/18 important: mistake has been made switching  between
-    lng and lat  mistake has been fixed                                                     */
-    //default location is Tel Aviv
-    public Location getDefaultLocation() {
 
-        Location locationDefault = new Location(provider);
-        locationDefault.setLongitude(34.855499);
-        locationDefault.setLatitude(32.109333);
-        return locationDefault;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(toShowDialog){// toShowDialog - is the parameter decided whether to show or not
+
+            // Alert Dialog - to inform about how the mock should work
+            //todo check if to remove
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            alert.setTitle("Find A Place:");
+            alert.setMessage("Search by Categories:\n 1.CITIES\n 2.RESTAURANTS\n 3.HOTELS\n" +
+                    "And then press SEARCH PLACES\n\n" +
+                    "Pressing for a prolonged time on the list will add the location\n" +
+                    "to the Favorites List and Data Base, where it can be accessed again\n" +
+                    "You can access the Favorites list by sliding\n the search list to the left\n" +
+                    "Favorites will not show unless\n you press Load Favorites \n" +
+                    "A long press will erase the specific favorites\n " +
+                    "Pressing Delete Favorites will delete the entire list \n" +
+                    "After turning the cell phone, press Load Favorites again");
+            ;
+
+            alert.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.dismiss();
+                }
+
+            });
+            alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface d) {
+                    toShowDialog = false;
+                    dialog = null;
+                }
+            });
+            dialog = alert.show();
+        }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(dialog != null && !toShowDialog){
+            dialog.dismiss();
+        }
+    }
 
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
@@ -531,9 +551,12 @@ public class Fragment1 extends Fragment {
         String UnitName[] = {"km", "mile"};
         String distanceText;
         double distanceInMeters = userLoci.distanceTo(targetLoci);
+        double distanceInMetersRounded= Double.parseDouble(new DecimalFormat("#.0")
+                        .format(distanceInMeters));
+
         double UnitFactor[] =
-                {Math.round(distanceInMeters / 1000),
-                        ((Math.round(distanceInMeters / (1000 * 1.6))))};
+                {(distanceInMetersRounded / 1000),
+                        (distanceInMetersRounded / (1000 * 1.6))};
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
