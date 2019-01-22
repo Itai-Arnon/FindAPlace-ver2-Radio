@@ -121,8 +121,9 @@ public class Fragment1 extends Fragment {
 // Optional Additions to the service Criteria Object
 
         /*Crucial for the  function success/work -- check if any permission was not granted*/
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-             /*  && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { */
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+               && (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)){
 
 
             //
@@ -139,11 +140,12 @@ public class Fragment1 extends Fragment {
         //Alternate Version:  locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, AMOUNT_OF_MS_BETWEEN_LOC_UPDATE, 0, new locListener());
 
         //prepare location provider
+        //provider = locManager.getBestProvider(new Criteria(), true);
         provider = locManager.getBestProvider(new Criteria(), true);
         if (provider != null) {
             //request location updates
-            lastLocation = locManager.getLastKnownLocation(provider);
-            locManager.requestLocationUpdates(provider, 1000, 1, locListener);
+            lastLocation = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, locListener);
         } else {
             Toast.makeText(getContext(), "Location Provider Has Failed, Exiting", Toast.LENGTH_LONG).show();
             System.exit(0);
@@ -210,7 +212,7 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("Hilton Tlv Hotel", 32.089191,
                                 34.770317, "Yarkon 10", "Tel Aviv", "http:"));
                         placesData.add(new Place("Dan Eilat Hotel", 29.55805, 34.94821, "N.Coast p.o 176", "Eilat", "http:"));
-                        placesData.add(new Place("Leonardo Tiberias Hotel", 32.79221, 35.53124, "Habanim St.1", "Tiberias", "http:"));
+                        placesData.add(new Place("Leonardo Tiberias\nHotel", 32.79221, 35.53124, "Habanim St.1", "Tiberias", "http:"));
                         break;
 
                     case R.id.resto_but:
@@ -219,7 +221,7 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("River TLV", 32.081441, 34.789787, "Weizmann St.14", "Tel Aviv", "tmp"));
                         placesData.add(new Place("La Cuccina", 29.548784, 34.9638, "Royal Beach Boardwalk", "Eilat", "tmp"));
                         placesData.add(new Place("Avenue Beach Bar", 29.549800, 34.954800, "Pa'amei HaShalom 10", "Eilat", "tmp"));
-                        placesData.add(new Place("HaBokrim Stake House", 32.790633, 34.964091, "Kdoshey Yassi St 1", "Haifa", "tmp"));
+                        placesData.add(new Place("HaBokrim Stake\nHouse", 32.790633, 34.964091, "Kdoshey Yassi St 1", "Haifa", "tmp"));
                         placesData.add(new Place("Ha Chavit", 32.795067, 34.956454, "David Elazar Rd.", "Haifa", "tmp"));
 
                         break;

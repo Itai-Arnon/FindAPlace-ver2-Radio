@@ -225,22 +225,5 @@ public class PlacesDao {
 }
 
 
- /*public List<Place> getAllPlaces() {
-        List<Place> places = new ArrayList<>();
-        SQLiteDatabase db = dbhelper.getReadableDatabase();
-        Cursor cursor = db.query(PlacesConstants.TABLE_NAME, null, null,
-                null, null, null, null);
-        try {
-            while (cursor.moveToNext())
-                //getPlaceFromCursor - adds one by one place object translated from cursor
-                places.add(getPlaceFromCursor(cursor));
-        } catch (SQLiteException err) {
-            Log.e(LOG_TAG, err.getMessage());
-            throw err;
-        } finally {
-            db.close();
-            cursor.close();
-        }
-        return places;
-    }*/
+
 

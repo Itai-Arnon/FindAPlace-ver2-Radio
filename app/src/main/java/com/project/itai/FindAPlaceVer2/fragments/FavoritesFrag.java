@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,8 +30,7 @@ import java.util.ArrayList;
 public class FavoritesFrag extends Fragment {
     private IUserActionsOnMap parentActivity;
     protected PlacesDao placesDao;
-    private ArrayList<Place> placesData;
-
+    private ArrayList<Place> placesData = new ArrayList<>();
     private RecyclerView recyclerView;
     private FavoriteAdapter mAdapter;
     private View fragmentView;
@@ -45,7 +43,8 @@ public class FavoritesFrag extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         placesDao = new PlacesDao(getContext());
-        placesData = new ArrayList<>();//initializes array list, stays empty until the Search Button
+        placesData = placesDao.getAllPlaces();
+        //initializes array list, stays empty until the Search Button
 
     }
     @Override
@@ -66,6 +65,7 @@ public class FavoritesFrag extends Fragment {
         //coupling mAdapter with RecyclerAdapter
         mAdapter = new FavoriteAdapter(placesData, new OnLocationListener(), new OnLocationLongListener());
         recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();//loading
 
 
 
@@ -174,6 +174,11 @@ public class FavoritesFrag extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(placesData.size() != mAdapter.getItemCount()){
+            placesData = placesDao.getAllPlaces();
+            mAdapter.notifyDataSetChanged();
+
+        }
 
     }
 

@@ -1,5 +1,6 @@
 package com.project.itai.FindAPlaceVer2.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,20 +10,23 @@ import android.widget.TextView;
 
 import com.project.itai.FindAPlaceVer2.R;
 import com.project.itai.FindAPlaceVer2.beans.Place;
+import com.project.itai.FindAPlaceVer2.dao.PlacesDao;
 
 import java.util.ArrayList;
 
-
+import static com.project.itai.FindAPlaceVer2.utils.MyApp.getContext;
 
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder> {
     private ArrayList<Place> placesData;
     private Listener listener;//instance of the interface
-    private LongClickListener longListener; //instance of the interface
+    private LongClickListener longListener; //instancec of the interface
+    //private PlacesDao placesDao = new PlacesDao(getContext());
+   // private ArrayList<Place> placesList = placesDao.getAllPlaces();
 
-
-    public FavoriteAdapter(ArrayList<Place> placesList, Listener listener, LongClickListener longListener) {
+    public FavoriteAdapter(ArrayList<Place> placesList , Listener listener, LongClickListener longListener) {
         this.placesData = new ArrayList<>();
+        this.placesData = placesList;
         this.placesData = placesList;
         this.listener = listener;
         this.longListener = longListener;
