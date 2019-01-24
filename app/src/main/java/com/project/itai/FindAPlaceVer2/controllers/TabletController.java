@@ -14,4 +14,9 @@ class TabletController implements IUserActionsOnMap {
     public void onFocusOnLocation(LatLng newLocation, String name){
         mapsFragment.onFocusOnLocation(newLocation,name);
     }
+
+    @Override
+    public void onRequestFreeMap(LatLng thisPosition) {
+        mapsFragment.onRequestFreeMap(thisPosition);
+    }
 }

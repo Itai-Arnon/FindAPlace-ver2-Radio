@@ -33,4 +33,18 @@ class MobileController implements IUserActionsOnMap {
 
         activity.startActivity(intent);
     }
+
+    @Override
+    public void onRequestFreeMap(LatLng thisPosition)   {
+        Intent intent = new Intent(activity, SecondActivity.class);
+        intent.putExtra("mapLat", thisPosition.latitude);
+        intent.putExtra("mapLng", thisPosition.longitude);
+        intent.putExtra("commandName", "onrequestmap");
+        activity.startActivity(intent);
+    }
+
+
+
+
+
 }

@@ -78,6 +78,15 @@
             android:layout_weight="1"
             android:text="@string/new_search"
             android:textSize="@dimen/frag1_txt_size" />
+        <Button
+            android:id="@+id/free_map"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="Free Map"
+            android:textSize="@dimen/frag1_txt_size"
+
+            />
     </LinearLayout>
 
 
@@ -98,6 +107,7 @@
 
 
 
+    <!--android:onClick="freeMap"-->
 
 
     <!--<Button-->

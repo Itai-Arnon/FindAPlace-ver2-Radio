@@ -43,7 +43,7 @@ public class FavoritesFrag extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         placesDao = new PlacesDao(getContext());
-        placesData = placesDao.getAllPlaces();
+      //  placesData = placesDao.getAllPlaces();
         //initializes array list, stays empty until the Search Button
 
     }
@@ -74,7 +74,6 @@ public class FavoritesFrag extends Fragment {
         loadFavs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 placesData = placesDao.getAllPlaces();
                 if (!(placesData.size() > 0))
                     Toast.makeText(v.getContext(), "Favorites are Empty", Toast.LENGTH_LONG).show();
@@ -174,12 +173,6 @@ public class FavoritesFrag extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(placesData.size() != mAdapter.getItemCount()){
-            placesData = placesDao.getAllPlaces();
-            mAdapter.notifyDataSetChanged();
-
-        }
-
     }
 
     //post onDestroy

@@ -25,8 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-
-public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUserActionsOnMap {
+public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUserActionsOnMap{
 
     private GoogleMap mMap;
     private LatLng currentLocation;
@@ -38,7 +37,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
     public float radius;
     public boolean isKm;
     private final String TAG = "ITAI";
-   // private final String BUNDLE_KEY = "bundle_key";
+    // private final String BUNDLE_KEY = "bundle_key";
 
     public static Fragment newInstance(LatLng newLocation) {
         Bundle args = new Bundle();
@@ -55,7 +54,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
         //retrieval of Radius and Measure Units
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-        radius = preferences.getFloat("radius",1000.0f);
+        radius = preferences.getFloat("radius", 1000.0f);
 
         isKm = preferences.getBoolean("isKm", isKm);
 
@@ -81,9 +80,15 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
             name = intent.getStringExtra("name");
             this.currentLocation = new LatLng(latitude, longitude);
         }
-
+        if (commandName != null && commandName.equals("onrequestmap")){
+           double lat = intent.getDoubleExtra("mapLat",0 );
+           double lng = intent.getDoubleExtra("mapLng",0 );
+           LatLng myLocation = new LatLng(lat, lng);
+           onRequestFreeMap(myLocation);
+        }
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -103,14 +108,14 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-       //==
         //==
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(this.currentLocation,13));
+        //==
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(this.currentLocation, 13));
         mMap.addMarker(new MarkerOptions().position(this.currentLocation).title(name));
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         //retrieval of Bounding Circle Radius and Measure Units
-        radius = preferences.getFloat("radius",1000.0f);
+        radius = preferences.getFloat("radius", 1000.0f);
         isKm = preferences.getBoolean("isKm", isKm);
 
         if (isKm == true) {
@@ -118,10 +123,11 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
         } else {
             radius = radius * 1.6f;
         }
-        circle  = mMap.addCircle((new CircleOptions().center(this.currentLocation).radius(radius).strokeColor(Color.RED)));
+        circle = mMap.addCircle((new CircleOptions().center(this.currentLocation).radius(radius).strokeColor(Color.RED)));
 
     }
-//the full version of onFocusOnLocation
+
+    //the full version of onFocusOnLocation
     @Override
     public void onFocusOnLocation(LatLng newLocation, String name) {
         double radius = 100;
@@ -133,7 +139,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
             mMap.addMarker(new MarkerOptions().position(newLocation).title(name));
             preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-            radius = preferences.getFloat("radius",1000.0f);
+            radius = preferences.getFloat("radius", 1000.0f);
             isKm = preferences.getBoolean("isKm", isKm);
 
             if (isKm == true) {
@@ -142,43 +148,21 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
                 radius = radius * 1.6f;
             }
 
-            circle = mMap.addCircle((new CircleOptions().center(newLocation).radius(radius).strokeColor(Color.RED)));        }
-
-        }
-
-
-
-} // end of class
-
-/*
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof FavoritesFrag.IUserActionsOnMap) {
-            this.parentActivity = (FavoritesFrag.IUserActionsOnMap) context;
-
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement IUserActionOnMap");
+            circle = mMap.addCircle((new CircleOptions().center(newLocation).radius(radius).strokeColor(Color.RED)));
         }
 
     }
 
-
-
-    //onDetach...
     @Override
-    public void onDetach() {
-        super.onDetach();
-        parentActivity = null;
+    public void onRequestFreeMap(LatLng thisPosition) {
+        this.currentLocation = thisPosition;
+         Toast.makeText(getContext(),"Your Vicinity",Toast.LENGTH_LONG).show();
+        if (mMap != null) {
+            mMap.clear();
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(thisPosition));
+            mMap.addMarker(new MarkerOptions().position(thisPosition).title(name));
+        }
     }
 
-    //Saves the state in case of device flip.
-    @Override
-    public void onSaveInstanceState(Bundle state) {
-        super.onSaveInstanceState(state);
+}
 
-    }
-
-*/

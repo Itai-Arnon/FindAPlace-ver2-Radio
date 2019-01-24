@@ -2,6 +2,7 @@ package com.project.itai.FindAPlaceVer2.activities;
 
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
@@ -51,15 +53,18 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
     public final String TEXT = "Shared_Text";
     public final String RADIUS = "radius";
     public final String JSSTRING = "json_table_backup";
-
+    public final String ALERT_DIALOG_START = "dialog_start";
+    public final String ALERT_DIALOG_END = "dialog_end";
     //ShareProvider
     private  ShareActionProvider shareActionProvider;
 
     Menu saveMenu;
+    private boolean toShowDialog = true;
+    private AlertDialog mDialog = null;
 
     /*********************************************************** 
     /*                                                          */
-    /*     Made by Itai Arnon DECEMBER 18                       */
+    /*     Made by Itai Arnon January 19                       */
     /*                                                          */ 
     /*                                                          */
     /*                                                          */ 
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
     /*                                                          */
     /************************************************************/
 
-    
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
         float radiusDataToBeSaved = 500.0f;
         editor = preferences.edit();//opens the editor
         editor.putFloat(RADIUS, radiusDataToBeSaved);
+
+
         editor.apply(); //commit data to editor
 
 
@@ -215,6 +222,21 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
 
         }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();}
+
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        }
+
+
+
     // method that initiates the SP
     private void defaultPrefData() {
         editor = preferences.edit();
@@ -223,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
     }
     //ViewPager Stack definition
     @Override
-    public void onBackPressed() {
+    public void onBackPressed(){
         if (viewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
@@ -233,6 +255,11 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
+
+     public void onRequestFreeMap(LatLng myLocation) {
+        userActionsController.onRequestFreeMap(myLocation);
+     }
+
 
 
 /**
@@ -292,6 +319,7 @@ private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
     protected void onDestroy() {
         super.onDestroy();
         this.unregisterReceiver(receiver);
+
     }
 
 }

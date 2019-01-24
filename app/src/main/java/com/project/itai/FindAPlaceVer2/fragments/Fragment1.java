@@ -48,6 +48,8 @@ import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import static com.project.itai.FindAPlaceVer2.utils.MyApp.getContext;
+
 
 public class Fragment1 extends Fragment {
 
@@ -89,7 +91,8 @@ public class Fragment1 extends Fragment {
     private Snackbar distanceBar;
     private Snackbar userLocationSnackbarError;
     private boolean toShowDialog = true;
-    private AlertDialog dialog = null;
+    private String ALERT_DIALOG_START;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,18 +104,22 @@ public class Fragment1 extends Fragment {
             @Override
             // location parameter presents the updated location of the device
             public void onLocationChanged(Location location) {
-                if(location != null) {
+                if (location != null) {
                     lastLocation = location;
                 }
             }
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
 
             @Override
-            public void onProviderEnabled(String provider) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
 
             @Override
-            public void onProviderDisabled(String provider) {}
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
         };
 
 
@@ -122,8 +129,8 @@ public class Fragment1 extends Fragment {
 
         /*Crucial for the  function success/work -- check if any permission was not granted*/
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-               && (ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)){
+                && (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
 
 
             //
@@ -152,6 +159,7 @@ public class Fragment1 extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -168,7 +176,6 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        // Alert Dialog - to inform about how the mock should work
 
 
 
@@ -212,7 +219,7 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("Hilton Tlv Hotel", 32.089191,
                                 34.770317, "Yarkon 10", "Tel Aviv", "http:"));
                         placesData.add(new Place("Dan Eilat Hotel", 29.55805, 34.94821, "N.Coast p.o 176", "Eilat", "http:"));
-                        placesData.add(new Place("Leonardo Tiberias\nHotel", 32.79221, 35.53124, "Habanim St.1", "Tiberias", "http:"));
+                        placesData.add(new Place("Leonardo Tiberias\n\tHotel", 32.79221, 35.53124, "Habanim St.1", "Tiberias", "http:"));
                         break;
 
                     case R.id.resto_but:
@@ -221,7 +228,7 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("River TLV", 32.081441, 34.789787, "Weizmann St.14", "Tel Aviv", "tmp"));
                         placesData.add(new Place("La Cuccina", 29.548784, 34.9638, "Royal Beach Boardwalk", "Eilat", "tmp"));
                         placesData.add(new Place("Avenue Beach Bar", 29.549800, 34.954800, "Pa'amei HaShalom 10", "Eilat", "tmp"));
-                        placesData.add(new Place("HaBokrim Stake\nHouse", 32.790633, 34.964091, "Kdoshey Yassi St 1", "Haifa", "tmp"));
+                        placesData.add(new Place("HaBokrim Stake\n\tHouse", 32.790633, 34.964091, "Kdoshey Yassi St 1", "Haifa", "tmp"));
                         placesData.add(new Place("Ha Chavit", 32.795067, 34.956454, "David Elazar Rd.", "Haifa", "tmp"));
 
                         break;
@@ -232,7 +239,7 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("River TLV", 32.081441, 34.789787, "Weizmann St.14", "Tel Aviv", "tmp"));
                         placesData.add(new Place("La Cuccina", 29.548784, 34.9638, "Royal Beach Boardwalk", "Eilat", "tmp"));
                         placesData.add(new Place("Avenue Beach Bar", 29.549800, 34.954800, "Pa'amei HaShalom 10", "Eilat", "tmp"));
-                        placesData.add(new Place("HaBokrim Stake House", 32.790633, 34.964091, "Kdoshey Yassi St 1", "Haifa", "tmp"));
+                        placesData.add(new Place("HaBokrim Stake\n\t House", 32.790633, 34.964091, "Kdoshey Yassi St 1", "Haifa", "tmp"));
                         placesData.add(new Place("Ha Chavit", 32.795067, 34.956454, "David Elazar Rd.", "Haifa", "tmp"));
 
                 }
@@ -246,41 +253,40 @@ public class Fragment1 extends Fragment {
         //Search Button
         Button searchButton = fragmentView.findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-                                                radioGroup = fragmentView.findViewById(R.id.radiogroup);
-                                                int radioId = radioGroup.getCheckedRadioButtonId();
-                                                radioButton = fragmentView.findViewById(radioId);
-                                                radioListener.onClick(radioButton);
+                radioGroup = fragmentView.findViewById(R.id.radiogroup);
+                int radioId = radioGroup.getCheckedRadioButtonId();
+                radioButton = fragmentView.findViewById(radioId);
+                radioListener.onClick(radioButton);
 
 
-                                                if (placesData.size() > 0) {
+                if (placesData.size() > 0) {
 
-                                                    mAdapter = new SearchAdapter(placesData, new OnLocationListener(), new OnLocationLongListener());
-                                                    mRecyclerView.setAdapter(mAdapter);
-                                                    mAdapter.notifyDataSetChanged();
-                                                    //insertion
-                                                    //todo check if need to declare again
-                                                    Gson gson = new Gson();
-                                                    String jsStringInsert = gson.toJson(placesData);
-                                                    // resetPreferences(); using the editor to insert
-                                                    editor = preferences.edit();
-                                                    editor.putString(JSSTRING, jsStringInsert);
-                                                    Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + jsStringInsert + "::");
-                                                    editor.apply();
+                    mAdapter = new SearchAdapter(placesData, new OnLocationListener(), new OnLocationLongListener());
+                    mRecyclerView.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
+                    //insertion
+                    //todo check if need to declare again
+                    Gson gson = new Gson();
+                    String jsStringInsert = gson.toJson(placesData);
+                    // resetPreferences(); using the editor to insert
+                    editor = preferences.edit();
+                    editor.putString(JSSTRING, jsStringInsert);
+                    Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + jsStringInsert + "::");
+                    editor.apply();
 
-                                                } else {
-                                                    //todo check
-                                                    Toast.makeText(getContext(), "An Error Occurred", Toast.LENGTH_LONG)
-                                                            .show();
-                                                    System.exit(0);
+                } else {
+                    //todo check
+                    Toast.makeText(getContext(), "An Error Occurred", Toast.LENGTH_LONG)
+                            .show();
+                    System.exit(0);
 
-                                                }
+                }
 
-                                            }
-                                        });
-
+            }
+        });
 
         // Returns the location of the user
         Button userLocation = fragmentView.findViewById(R.id.user_loc);
@@ -321,7 +327,7 @@ public class Fragment1 extends Fragment {
                             });
                     userLocationSnackbar.show();
                 } else {
-                    userLocationSnackbarError=      Snackbar.make(getView(), "Failed to find your Location",
+                    userLocationSnackbarError = Snackbar.make(getView(), "Failed to find your Location",
                             Snackbar.LENGTH_INDEFINITE)
                             .setAction("Dismiss", new View.OnClickListener() {
                                 @Override
@@ -329,7 +335,7 @@ public class Fragment1 extends Fragment {
                                     userLocationSnackbarError.dismiss();
                                 }
                             });
-                            userLocationSnackbarError.show();
+                    userLocationSnackbarError.show();
                 }
             }
 
@@ -348,8 +354,19 @@ public class Fragment1 extends Fragment {
             }
         });
 
+        Button freeMap = fragmentView.findViewById(R.id.free_map);
+        freeMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final LatLng thisLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+                parentActivity.onRequestFreeMap(thisLocation);
+            }
+        });
+
         return fragmentView;
     }
+
+
 
     //The Listener class RecyclerAdapter
     class OnLocationListener implements SearchAdapter.Listener {
@@ -375,12 +392,12 @@ public class Fragment1 extends Fragment {
                     targetLocation.setLatitude(place.getLat());
                     targetLocation.setLongitude(place.getLng());
                     //calculate distance part of onLocationChanged method:LocationListener interface
-                     distanceInMeters = targetLocation.distanceTo(userLocation);
+                    distanceInMeters = targetLocation.distanceTo(userLocation);
 
 
                     // via method textBasedOnUnit() arrays both miles and km are accommodated
 
-                    distanceBar = Snackbar.make(getView(), "Distance to "+ place.getName() + ": "+ textBasedOnUnit(userLocation, targetLocation),
+                    distanceBar = Snackbar.make(getView(), "Distance to " + place.getName() + ": " + textBasedOnUnit(userLocation, targetLocation),
                             Snackbar.LENGTH_INDEFINITE)
                             .setAction("Dismiss", new View.OnClickListener() {
                                 @Override
@@ -453,11 +470,11 @@ public class Fragment1 extends Fragment {
     }
 
 
-
     @Override
     public void onResume() {
         super.onResume();
-        if(toShowDialog){// toShowDialog - is the parameter decided whether to show or not
+        // toShowDialog - is the parameter decided whether to show or not
+        if (preferences.getInt(ALERT_DIALOG_START, 0) == 0){
 
             // Alert Dialog - to inform about how the mock should work
             //todo check if to remove
@@ -472,31 +489,25 @@ public class Fragment1 extends Fragment {
                     "A long press will erase the specific favorites\n " +
                     "Pressing Delete Favorites will delete the entire list \n" +
                     "After turning the cell phone, press Load Favorites again");
-            ;
+
 
             alert.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
+
+
                 }
 
             });
-            alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface d) {
-                    toShowDialog = false;
-                    dialog = null;
-                }
-            });
-            dialog = alert.show();
+            alert.show();
+            preferences.edit().putInt(ALERT_DIALOG_START, 1).apply();
+
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(dialog != null && !toShowDialog){
-            dialog.dismiss();
-        }
     }
 
     public void onSaveInstanceState(Bundle state) {
@@ -525,7 +536,6 @@ public class Fragment1 extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-
         parentActivity = null;
     }
 
@@ -535,17 +545,21 @@ public class Fragment1 extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (locManager != null) {
-            if (ContextCompat.checkSelfPermission(getContext(), PERMISSION_STRING) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getContext(), PERMISSION_STRING) == PackageManager.PERMISSION_GRANTED)
                 locManager.removeUpdates(locListener);
-            }
             locManager = null;
         }
-    }
+        // preferences.edit().putInt(ALERT_DIALOG_START, 0).apply();
+   }
 
 
     public interface IUserActionsOnMap {
         void onFocusOnLocation(LatLng newLocation, String name);
+
+        void onRequestFreeMap(LatLng thisLocation);
+
     }
+
 
     // Calculates the the distance based on the preferred units and returns it as text
     public String textBasedOnUnit(Location userLoci, Location targetLoci) {
@@ -553,8 +567,8 @@ public class Fragment1 extends Fragment {
         String UnitName[] = {"km", "mile"};
         String distanceText;
         double distanceInMeters = userLoci.distanceTo(targetLoci);
-        double distanceInMetersRounded= Double.parseDouble(new DecimalFormat("#.0")
-                        .format(distanceInMeters));
+        double distanceInMetersRounded = Double.parseDouble(new DecimalFormat("#.0")
+                .format(distanceInMeters));
 
         double UnitFactor[] =
                 {(distanceInMetersRounded / 1000),
@@ -570,6 +584,7 @@ public class Fragment1 extends Fragment {
             distanceText = " " + UnitFactor[1] + " " + UnitName[1];
         return distanceText;
     }
+
 
 }
 
