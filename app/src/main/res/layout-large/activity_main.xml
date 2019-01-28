@@ -19,11 +19,6 @@
         android:name="com.project.itai.FindAPlaceVer2.fragments.MyMapFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/pager"
-        android:layout_marginEnd="29dp"
-        android:layout_marginRight="29dp"
         android:layout_weight="1"
 
          />

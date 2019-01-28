@@ -67,7 +67,7 @@
             android:id="@+id/user_loc"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/frag1button_height"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:text="User Location"
             android:textSize="@dimen/frag1_txt_size" />
 

@@ -14,4 +14,5 @@ public class PlacesConstants {
     public static final String PLACES_CITY = "city";
     public static final String PLACES_URL = "urlImage";
 
+
 }

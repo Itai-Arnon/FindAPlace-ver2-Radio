@@ -48,8 +48,6 @@ import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import static com.project.itai.FindAPlaceVer2.utils.MyApp.getContext;
-
 
 public class Fragment1 extends Fragment {
 
@@ -68,12 +66,14 @@ public class Fragment1 extends Fragment {
 
     //  keys  needed preferences values
     private final String FAVTABLE = "Shared_Text";
-    private final String JSSTRING = "json_string:";
+    private final String JSSTRING = "json_string";
+    private final String JSSTRING_DEFAULT = "js_string_default";
     private final String USER_LOC_LATITUDE = "user_lat";
     private final String USER_LOC_LONGTITUDE = "user_long";
     private final String UNIT = "isKm";
+    private final String FIRST_TIME_FLAG = "first_time_flag";
+    private final String FIRST_TIME_FLAG_B = "first_time_flag_b";
     private boolean isLongClick = false; //assures a long click won't activate a short click
-
 
     //User Location
     //locListener is an interface that derives locations service via  locManager
@@ -90,8 +90,6 @@ public class Fragment1 extends Fragment {
     private Snackbar distanceFailBar;
     private Snackbar distanceBar;
     private Snackbar userLocationSnackbarError;
-    private boolean toShowDialog = true;
-    private String ALERT_DIALOG_START;
 
 
     @Override
@@ -147,12 +145,11 @@ public class Fragment1 extends Fragment {
         //Alternate Version:  locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, AMOUNT_OF_MS_BETWEEN_LOC_UPDATE, 0, new locListener());
 
         //prepare location provider
-        //provider = locManager.getBestProvider(new Criteria(), true);
         provider = locManager.getBestProvider(new Criteria(), true);
         if (provider != null) {
             //request location updates
-            lastLocation = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, locListener);
+            lastLocation = locManager.getLastKnownLocation(provider);
+            locManager.requestLocationUpdates(provider, 1000, 1, locListener);
         } else {
             Toast.makeText(getContext(), "Location Provider Has Failed, Exiting", Toast.LENGTH_LONG).show();
             System.exit(0);
@@ -176,16 +173,21 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-
-
-
         //defining  the fragment preferences from the default file name
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
 
         //retrieval of Saved list - the one saved in the search button
+        String jsStringRestore;
         Gson gson = new Gson();
-        String jsStringRestore = preferences.getString(JSSTRING, null);
+        //decides whether its the 1st time and then sets to default places list
+        if (preferences.getInt(FIRST_TIME_FLAG_B, 0) == 0) {
+            jsStringRestore = preferences.getString(JSSTRING_DEFAULT, null);
+            preferences.edit().putInt(FIRST_TIME_FLAG_B, 1)
+                .apply();
+        } else
+            jsStringRestore = preferences.getString(JSSTRING, null);//if it's not the first time
+
         Type type = new TypeToken<ArrayList<Place>>() {
         }.getType();
         if (!TextUtils.isEmpty(jsStringRestore))
@@ -211,6 +213,8 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("Sydney", -1 * 33.8688, 151.2093, "Australia", "", "tmp"));
                         placesData.add(new Place("London", 51.507351, -0.127758, "England", "", "tmp"));
                         placesData.add(new Place("Tel Aviv", 32.078829, 34.781175, "Israel", "", "tmp"));
+
+
                         break;
 
                     case R.id.hotel_but:
@@ -234,13 +238,13 @@ public class Fragment1 extends Fragment {
                         break;
 
                     default:
-                        //todo check if it's ok
-                        placesData.add(new Place("Giraffe", 32.076992, 34.781158, "Ibn Gabirol St.49", " Tel Aviv", "tmp"));
-                        placesData.add(new Place("River TLV", 32.081441, 34.789787, "Weizmann St.14", "Tel Aviv", "tmp"));
-                        placesData.add(new Place("La Cuccina", 29.548784, 34.9638, "Royal Beach Boardwalk", "Eilat", "tmp"));
-                        placesData.add(new Place("Avenue Beach Bar", 29.549800, 34.954800, "Pa'amei HaShalom 10", "Eilat", "tmp"));
-                        placesData.add(new Place("HaBokrim Stake\n\t House", 32.790633, 34.964091, "Kdoshey Yassi St 1", "Haifa", "tmp"));
-                        placesData.add(new Place("Ha Chavit", 32.795067, 34.956454, "David Elazar Rd.", "Haifa", "tmp"));
+                        placesData.add(new Place("Nassau", 25.05, -77.4833, "New Providence", "Bahamas", "tmp"));
+                        placesData.add(new Place("Brussels", 50.833, 4.33, "Belgium", "", "tmp"));
+                        placesData.add(new Place("Vienna", 48.2, 16.337, "Austria", "", "tmp"));
+                        placesData.add(new Place("Sydney", -1 * 33.8688, 151.2093, "Australia", "", "tmp"));
+                        placesData.add(new Place("London", 51.507351, -0.127758, "England", "", "tmp"));
+                        placesData.add(new Place("Tel Aviv", 32.078829, 34.781175, "Israel", "", "tmp"));
+                        break;
 
                 }
             }
@@ -257,9 +261,9 @@ public class Fragment1 extends Fragment {
             public void onClick(View v) {
 
                 radioGroup = fragmentView.findViewById(R.id.radiogroup);
-                int radioId = radioGroup.getCheckedRadioButtonId();
+                int radioId = radioGroup.getCheckedRadioButtonId();//id of pressed radio button
                 radioButton = fragmentView.findViewById(radioId);
-                radioListener.onClick(radioButton);
+                radioListener.onClick(radioButton);//loading of placeData
 
 
                 if (placesData.size() > 0) {
@@ -268,15 +272,14 @@ public class Fragment1 extends Fragment {
                     mRecyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
                     //insertion
-                    //todo check if need to declare again
                     Gson gson = new Gson();
                     String jsStringInsert = gson.toJson(placesData);
                     // resetPreferences(); using the editor to insert
                     editor = preferences.edit();
                     editor.putString(JSSTRING, jsStringInsert);
-                    Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + jsStringInsert + "::");
                     editor.apply();
 
+                    Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + jsStringInsert + "::");
                 } else {
                     //todo check
                     Toast.makeText(getContext(), "An Error Occurred", Toast.LENGTH_LONG)
@@ -363,9 +366,9 @@ public class Fragment1 extends Fragment {
             }
         });
 
+
         return fragmentView;
     }
-
 
 
     //The Listener class RecyclerAdapter
@@ -456,8 +459,6 @@ public class Fragment1 extends Fragment {
                         , Toast.LENGTH_LONG).show();
                 //Log test
                 Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + FavWrite + "::");
-
-
             } else
                 Toast.makeText(getActivity().getApplicationContext(), "Already Exists In Favorites", Toast.LENGTH_LONG).show();
             return false;
@@ -465,43 +466,44 @@ public class Fragment1 extends Fragment {
     }
 
     public Location getlastLocation() {
-
         return lastLocation;
     }
-
 
     @Override
     public void onResume() {
         super.onResume();
         // toShowDialog - is the parameter decided whether to show or not
-        if (preferences.getInt(ALERT_DIALOG_START, 0) == 0){
+        if (preferences.getInt(FIRST_TIME_FLAG, 0) == 0) {
 
             // Alert Dialog - to inform about how the mock should work
             //todo check if to remove
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle("Find A Place:");
-            alert.setMessage("Search by Categories:\n 1.CITIES\n 2.RESTAURANTS\n 3.HOTELS\n" +
+            alert.setMessage("Search by Categories:\n A.CITIES\n B.RESTAURANTS\n C.HOTELS\n" +
                     "And then press SEARCH PLACES\n\n" +
-                    "Pressing for a prolonged time on the list will add the location\n" +
-                    "to the Favorites List and Data Base, where it can be accessed again\n" +
-                    "You can access the Favorites list by sliding\n the search list to the left\n" +
-                    "Favorites will not show unless\n you press Load Favorites \n" +
-                    "A long press will erase the specific favorites\n " +
-                    "Pressing Delete Favorites will delete the entire list \n" +
-                    "After turning the cell phone, press Load Favorites again");
-
+                    "1.User Location:  show the user location\n" +
+                    "2.New Search: clear the list\n" +
+                    "3.Free Map: access the map\n" +
+                    "and scroll around freely\n"+
+                    "4.Pressing for a prolonged time on the list will add the location\n"+
+                    "to the Favorites List & DB, where it can be accessed again\n"+
+                    "5.Access the Favorites list by sliding\n the search list to the left\n"+
+                    "6.Load Favorites:  will show the favorites\n"+
+                    "7.Short Press: A short press will show favorite location\n"+
+                    "8.Long Press: will erase the specific favorites\n"+
+                    "9.Delete Favorites:  deletes the entire list"+
+                    "and removes it from the DB\n"+
+                    "10.After turning the phone: press load favorites again\n");
 
             alert.setPositiveButton("dismiss", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
-
-
                 }
 
             });
             alert.show();
-            preferences.edit().putInt(ALERT_DIALOG_START, 1).apply();
-
+            preferences.edit().putInt(FIRST_TIME_FLAG, 1)
+                    .apply();
         }
     }
 
@@ -549,8 +551,7 @@ public class Fragment1 extends Fragment {
                 locManager.removeUpdates(locListener);
             locManager = null;
         }
-        // preferences.edit().putInt(ALERT_DIALOG_START, 0).apply();
-   }
+    }
 
 
     public interface IUserActionsOnMap {

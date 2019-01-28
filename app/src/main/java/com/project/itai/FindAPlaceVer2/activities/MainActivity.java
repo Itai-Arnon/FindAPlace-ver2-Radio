@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
     public final String RADIUS = "radius";
     public final String JSSTRING = "json_table_backup";
     public final String ALERT_DIALOG_START = "dialog_start";
-    public final String ALERT_DIALOG_END = "dialog_end";
+
     //ShareProvider
     private  ShareActionProvider shareActionProvider;
 
@@ -66,13 +66,7 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
     /*                                                          */
     /*     Made by Itai Arnon January 19                       */
     /*                                                          */ 
-    /*                                                          */
-    /*                                                          */ 
-    /*                                                          */                                                      
-    /*                                                          */
-    /*                                                          */
     /************************************************************/
-
 
 
     @Override
@@ -212,12 +206,13 @@ public class MainActivity extends AppCompatActivity implements Fragment1.IUserAc
                 saveMenu.findItem(R.id.itemRadius1).setCheckable(false);
                 return true;
 
-            case R.id.itemQuit:
+                case R.id.itemQuit:
                 System.exit(0);
                 finish();
                 return true;
 
             default:
+
                 return super.onOptionsItemSelected(item);
 
         }
