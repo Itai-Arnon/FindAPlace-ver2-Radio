@@ -156,7 +156,7 @@ public class MyMapFragment extends Fragment implements OnMapReadyCallback, IUser
     @Override
     public void onRequestFreeMap(LatLng thisPosition) {
         this.currentLocation = thisPosition;
-         Toast.makeText(getContext(),"Your Vicinity",Toast.LENGTH_LONG).show();
+         Toast.makeText(getContext(),"Free Map",Toast.LENGTH_LONG).show();
         if (mMap != null) {
             mMap.clear();
             mMap.animateCamera(CameraUpdateFactory.newLatLng(thisPosition));

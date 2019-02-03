@@ -47,6 +47,7 @@ import com.project.itai.FindAPlaceVer2.dao.PlacesDao;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Fragment1 extends Fragment {
@@ -65,18 +66,18 @@ public class Fragment1 extends Fragment {
     protected RadioButton radioButton;
 
     //  keys  needed preferences values
-    private final String FAVTABLE = "Shared_Text";
     private final String JSSTRING = "json_string";
-    private final String JSSTRING_DEFAULT = "js_string_default";
     private final String USER_LOC_LATITUDE = "user_lat";
     private final String USER_LOC_LONGTITUDE = "user_long";
     private final String UNIT = "isKm";
     private final String FIRST_TIME_FLAG = "first_time_flag";
+    private final String JSSTRING_DEFAULT = "js_string_default";
     private final String FIRST_TIME_FLAG_B = "first_time_flag_b";
     private boolean isLongClick = false; //assures a long click won't activate a short click
+    //private final String FAVTABLE = "Shared_Text";
 
-    //User Location
-    //locListener is an interface that derives locations service via  locManager
+
+    //User Location:locListener is an interface that derives locations service via  locManager
     // who derives from the System Loc Services
     private LocationManager locManager;
     private static Location lastLocation = null;
@@ -102,22 +103,17 @@ public class Fragment1 extends Fragment {
             @Override
             // location parameter presents the updated location of the device
             public void onLocationChanged(Location location) {
-                if (location != null) {
+                if (location != null)
                     lastLocation = location;
-                }
             }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
 
             @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
+            public void onProviderEnabled(String provider) {}
 
             @Override
-            public void onProviderEnabled(String provider) {
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-            }
+            public void onProviderDisabled(String provider) {}
         };
 
 
@@ -181,11 +177,12 @@ public class Fragment1 extends Fragment {
         String jsStringRestore;
         Gson gson = new Gson();
         //decides whether its the 1st time and then sets to default places list
+        //uses the default sp value JSSTRING_DEFAULT
         if (preferences.getInt(FIRST_TIME_FLAG_B, 0) == 0) {
             jsStringRestore = preferences.getString(JSSTRING_DEFAULT, null);
             preferences.edit().putInt(FIRST_TIME_FLAG_B, 1)
                 .apply();
-        } else
+        } else // when not the first time, uses the sp Value JSSTRING
             jsStringRestore = preferences.getString(JSSTRING, null);//if it's not the first time
 
         Type type = new TypeToken<ArrayList<Place>>() {
@@ -193,12 +190,13 @@ public class Fragment1 extends Fragment {
         if (!TextUtils.isEmpty(jsStringRestore))
             placesData = gson.fromJson(jsStringRestore, type);
 
-        if (placesData.size() > 0) {
+        if (placesData.size() > 0) { //initialization of the recyclerview
             mAdapter = new SearchAdapter(placesData, new OnLocationListener(), new OnLocationLongListener());
             mRecyclerView.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
         }
-
+        //created a radio listener to provide strict categories of search
+        // only the marked radio button is loaded inside placedData
         final View.OnClickListener radioListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,7 +211,6 @@ public class Fragment1 extends Fragment {
                         placesData.add(new Place("Sydney", -1 * 33.8688, 151.2093, "Australia", "", "tmp"));
                         placesData.add(new Place("London", 51.507351, -0.127758, "England", "", "tmp"));
                         placesData.add(new Place("Tel Aviv", 32.078829, 34.781175, "Israel", "", "tmp"));
-
 
                         break;
 
@@ -251,7 +248,7 @@ public class Fragment1 extends Fragment {
         };
 
 
-        //At this stage placesData is updated according to the radio buttons
+        //In the following stage placesData is updated according to the radio buttons
         //defining the views, and activating the anonymous class via radioListener
 
         //Search Button
@@ -263,7 +260,7 @@ public class Fragment1 extends Fragment {
                 radioGroup = fragmentView.findViewById(R.id.radiogroup);
                 int radioId = radioGroup.getCheckedRadioButtonId();//id of pressed radio button
                 radioButton = fragmentView.findViewById(radioId);
-                radioListener.onClick(radioButton);//loading of placeData
+                radioListener.onClick(radioButton);//loading of placeData via listener
 
 
                 if (placesData.size() > 0) {
@@ -292,6 +289,8 @@ public class Fragment1 extends Fragment {
         });
 
         // Returns the location of the user
+        // There might be location problems with emulators
+        //in my computer I couldn't get the location, maybe my sensor is damaged
         Button userLocation = fragmentView.findViewById(R.id.user_loc);
         userLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -315,8 +314,7 @@ public class Fragment1 extends Fragment {
                     editor.apply();
 
                     //informing the user about his loci. The snackbar will not disappear
-                    // until the dismiss button is pressed and so are most of the snackbars
-                    //these two round lat & lng to provide a better look
+                    // until the dismiss button is pressed                     //these two round lat & lng to provide a better look
                     double latitude = Double.parseDouble(new DecimalFormat("##.####").format(lat));
                     double longitude = Double.parseDouble(new DecimalFormat("##.####").format(lng));
                     userLocationSnackbar = Snackbar.make(getView(), "your latitude is: " + latitude
@@ -356,7 +354,8 @@ public class Fragment1 extends Fragment {
                 Toast.makeText(getContext(), "Contents Cleared", Toast.LENGTH_LONG).show();
             }
         });
-
+        //provides a free scroll map, in the vicinity of the user
+        //uses the IUserActionsOnMap - expanded to accommodate a 2nd function
         Button freeMap = fragmentView.findViewById(R.id.free_map);
         freeMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -441,24 +440,26 @@ public class Fragment1 extends Fragment {
 
             //assures similar places will not enter the placesdao
             if (!placesDao.isExistentInDB(place)) {
-                Place newPlace = new Place(place.getName(), place.getLat(), place.getLng(), place.getAddress(), place.getCity(), place.getUrlImage());
+                Place newPlace = new Place(place.getName(), place.getLat(), place.getLng(),
+                        place.getAddress(), place.getCity(), place.getUrlImage());
+
                 placesDao.addPlace(newPlace);
 
                 //Saving favorites to json format
-                ArrayList<Place> tmpList = new ArrayList<>();
-                tmpList.add(newPlace);
-                Gson gson = new Gson();
-                String FavWrite = gson.toJson(tmpList);
-                //preferences
-                editor = preferences.edit();
-                editor.putString(FAVTABLE, FavWrite);
-                editor.apply();
+//                ArrayList<Place> mList = new ArrayList<>();
+//                mList.add(newPlace);
+//                Gson gson = new Gson();
+//                String FavWrite = gson.toJson(mList);
+//                //preferences
+//                editor = preferences.edit();
+//                editor.putString(FAVTABLE, FavWrite);
+//                editor.apply();
 
                 //announcing addition to favorite
                 Toast.makeText(getActivity().getApplicationContext(), "Adding to Favorites: " + place.getName()
                         , Toast.LENGTH_LONG).show();
                 //Log test
-                Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + FavWrite + "::");
+                //Log.d(PlacesConstants.MY_NAME + "JSSTRING PREF   ", "test pref" + FavWrite + "::");
             } else
                 Toast.makeText(getActivity().getApplicationContext(), "Already Exists In Favorites", Toast.LENGTH_LONG).show();
             return false;

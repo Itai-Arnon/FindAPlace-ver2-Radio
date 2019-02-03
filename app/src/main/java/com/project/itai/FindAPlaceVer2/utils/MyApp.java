@@ -22,9 +22,6 @@ public class MyApp extends Application {
 
     private final String FIRST_TIME_FLAG = "first_time_flag";
     private final String FIRST_TIME_FLAG_B = "first_time_flag_b";
-
-
-
     private final String JSSTRING_DEFAULT = "js_string_default";
     private final String JSSTRING = "json_string";
     private ArrayList<Place> placesDataDefault = new ArrayList<>();
@@ -58,7 +55,8 @@ public class MyApp extends Application {
 
         if (!TextUtils.isEmpty(jsStringInsert)) {
             editor = preferences.edit();
-            editor.putString(JSSTRING_DEFAULT, jsStringInsert);
+            editor.putString(JSSTRING_DEFAULT, jsStringInsert);//the default string
+            editor.putString(JSSTRING, jsStringInsert);//the regularly used  string is initialized
             editor.apply();
         }
 
