@@ -1,7 +1,5 @@
 
 
-
-
 ### Description
 This project is a comprehensive mobile application designed to enhance the travel experience by providing detailed touristic information and advanced map navigation. It helps users discover local attractions, restaurants, pubs, and other points of interest.
 
@@ -15,7 +13,7 @@ This project is a comprehensive mobile application designed to enhance the trave
 - **Additional Features**: Includes options for user reviews, ratings, and saving favorite places for future reference.
 
 ### Technologies Used
-- **Programming Languages**: Java/Kotlin
+- **Programming Languages**: Java-Android/XML
 - **Database**: SQLite
 - **APIs**: Google Maps API for navigation and location services
 - **Frameworks**: Android SDK
